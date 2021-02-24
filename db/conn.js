@@ -16,7 +16,7 @@ var config = require("../config/config.json")
 // });
 var pool;
 const sqlOptions = {
-    connectionLimit: 20, //important
+    connectionLimit: 20, 
     host : config.db.db_host,
     user : config.db.db_user,
     password : config.db.db_password,
