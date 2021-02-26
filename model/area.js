@@ -2,11 +2,11 @@
 var db = require("../db/db_shim");
 const logger = require('../utils/logger').getLogger("model/area.js");
 
+// model for calculate area
+
 const areas = {
     areaSquare: function(area, shape) {
-      console.log("here")
         return new Promise((resolve, reject) => {
-          console.log(area)
             const areaQuery = db.format(
               `INSERT INTO tbl_area (area, shape)
           VALUES (?, ?)`,
@@ -16,7 +16,6 @@ const areas = {
             
             db.query(areaQuery, true)
               .then((result) => {
-                console.log("d")
                 return resolve(result);
               })
               .catch((error) => {

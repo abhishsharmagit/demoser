@@ -1,18 +1,19 @@
 var router = require('express').Router();
 var areaController = require("../controller/area")
-var loginController = require("../controller/login")
+var userController = require("../controller/user")
 
-router.post("/squareArea", loginController.isAuth, areaController.squareArea);
-router.post("/rectArea", areaController.rectArea)
-router.post("/circleArea", areaController.circleArea)
-router.post("/triArea", areaController.triArea)
-router.get("/getArea", areaController.getArea)
-router.get("/getsqArea", areaController.getsqArea)
-router.get("/getreArea", areaController.getrectArea)
-router.get("/getcirArea", areaController.getcirArea)
-router.get("/gettriArea", areaController.gettriArea)
-router.get("/login", loginController.login)
-router.get("/user", loginController.isAuth, loginController.user)
-router.get("/logout",  loginController.logout)
+router.post("/squareArea", userController.isAuth, areaController.squareArea);
+router.post("/rectArea", userController.isAuth, areaController.rectArea)
+router.post("/circleArea", userController.isAuth, areaController.circleArea)
+router.post("/triArea", userController.isAuth, areaController.triArea)
+router.get("/getArea", userController.isAuth, areaController.getArea)
+router.get("/getsqArea", userController.isAuth, areaController.getsqArea)
+router.get("/getreArea", userController.isAuth, areaController.getrectArea)
+router.get("/getcirArea", userController.isAuth, areaController.getcirArea)
+router.get("/gettriArea", userController.isAuth, areaController.gettriArea)
+router.post("/login", userController.login)
+router.get("/logout", userController.isAuth, userController.logout)
+router.post("/register",  userController.register)
+router.post("/forgot",  userController.forgotPassword)
 
 module.exports = router;

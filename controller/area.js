@@ -7,6 +7,9 @@ const squareArea = async function (req, res) {
            side, shape
        } = req.body;
        var shapes = shape.toLowerCase();
+       if(shapes != "square"){
+           throw "error in shape"
+       }
        var area = side*side;
             const calcArea = await areasModel.areaSquare(area, shapes);
             return res.json({
@@ -32,6 +35,9 @@ const rectArea = async function (req, res) {
             length, breadth, shape
         } = req.body;
         var shapes = shape.toLowerCase();
+        if(shapes != "rectangle"){
+            throw "error in shape"
+        }
         var area = 2*length*breadth;
              const calcArea = await areasModel.areaRect(area, shapes);
              return res.json({
@@ -57,6 +63,9 @@ const rectArea = async function (req, res) {
             radius, shape
         } = req.body;
         var shapes = shape.toLowerCase();
+        if(shapes != "circle"){
+            throw "error in shape"
+        }
         var area = 3.14*radius*radius;
              const calcArea = await areasModel.areaCircle(area, shapes);
            
@@ -83,6 +92,9 @@ const rectArea = async function (req, res) {
             b, h, shape
         } = req.body;
         var shapes = shape.toLowerCase();
+        if(shapes != "triangle"){
+            throw "error in shape"
+        }
         var area = 0.5*b*h;
              const calcArea = await areasModel.areaTri(area, shapes);
            

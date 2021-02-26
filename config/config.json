@@ -10,6 +10,13 @@
       "db_user": "root",
       "db_password": "root",
       "db_name": "demoserver"
+    },
+    "options" : {
+      "config": {
+          "user" : "root",
+          "password" : "root",
+          "database" : "demoserver" 
+      }
     }
 
   }
