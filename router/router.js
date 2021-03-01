@@ -15,5 +15,6 @@ router.post("/login", userController.login)
 router.get("/logout", userController.isAuth, userController.logout)
 router.post("/register",  userController.register)
 router.post("/forgot",  userController.forgotPassword)
+router.post("/update", userController.isAuth, userController.updatePassword)
 
 module.exports = router;

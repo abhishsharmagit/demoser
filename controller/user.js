@@ -1,5 +1,6 @@
 const logger = require('../utils/logger').getLogger("controller/user.js");
 const userModel = require("../model/user")
+var bcrypt = require('bcryptjs');
 
 
 const register = async function (req, res){
@@ -7,8 +8,8 @@ const register = async function (req, res){
      let {
          username, email, password
      } = req.body;
- 
-     let registeration = await userModel.registerUser(username, email, password);
+     var hash = await bcrypt.hash(password, 10)
+     let registeration = await userModel.registerUser(username, email, hash);
  
      return res.json({
          success:"true",
@@ -30,13 +31,18 @@ const login = async function (req, res){
         } = req.body;
     
         let login = await userModel.loginUser(username);
-        console.log(login)
-        if(password == login.password){
-            req.session.isAuth = true;
-            return res.json({
-                success:"true",
-                message: login
-            })
+        if(login){
+            const validPass = await bcrypt.compare(password, login.password);
+            if(validPass){
+                req.session.isAuth = true;
+                return res.json({
+                    success:"true",
+                    message: "Successfully Logged in"
+                })
+            }else{
+                throw "wrong Inputs"
+            }
+            
         }else{
             throw "error"
         }
@@ -49,8 +55,32 @@ const login = async function (req, res){
             message: error
         })
     }
-    
 }
+
+    const updatePassword = async function (req, res){
+        try{
+            let {
+                email, password
+             } = req.body;
+             var hash = await bcrypt.hash(password, 10)
+             let updatePassword = await userModel.updatePassword(hash, email);
+                return res.json({
+                    success:"true",
+                    message: "Password Updated"
+                })
+            
+        }catch(error){
+            logger.error(error, "error in login")
+            return res.json({
+                success: "false",
+                message: error
+            })
+        }
+        
+    }
+
+
+
 
 const forgotPassword = async function (req, res){
     try{
@@ -60,7 +90,8 @@ const forgotPassword = async function (req, res){
  
      let forgot = await userModel.forgotPassword(email);
      if(email == forgot.email){
-         let updatePassword = await userModel.updatePassword(password, email);
+        var hash = await bcrypt.hash(password, 10)
+         let updatePassword = await userModel.updatePassword(hash, email);
      }
  
      return res.json({
@@ -103,4 +134,4 @@ const isAuth = async (req, res, next) => {
     }
 }
 
-module.exports = {login, logout, isAuth, register, forgotPassword};
+module.exports = {login, logout, isAuth, register, forgotPassword, updatePassword};

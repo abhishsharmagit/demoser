@@ -12,6 +12,7 @@ var router = require("./router/router")
 var mysql = require("mysql")
 var db = require("./db/conn")
 var session = require("express-session")
+var bcrypt = require('bcryptjs');
 
 // redis for storing the session
 var redis = require("redis")
