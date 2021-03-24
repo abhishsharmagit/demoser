@@ -1,7 +1,8 @@
 const logger = require('../utils/logger').getLogger("controller/user.js");
 const userModel = require("../model/user")
 var bcrypt = require('bcryptjs');
-
+const {signAccessToken, signRefreshToken, verifyRefreshToken} = require("../utils/jwt")
+const redisClient = require("../db/redis")
 
 const register = async function (req, res){
     try{
@@ -10,6 +11,7 @@ const register = async function (req, res){
      } = req.body;
      var hash = await bcrypt.hash(password, 10)
      let registeration = await userModel.registerUser(username, email, hash);
+     
  
      return res.json({
          success:"true",
@@ -33,15 +35,30 @@ const login = async function (req, res){
         let login = await userModel.loginUser(username);
         if(login){
             const validPass = await bcrypt.compare(password, login.password);
-            if(validPass){
+            if(req.sess && validPass){
                 req.session.isAuth = true;
+
                 return res.json({
                     success:"true",
-                    message: "Successfully Logged in"
+                    message: "Successfully Logged in",
                 })
+                
             }else{
-                throw "wrong Inputs"
+                if(validPass){
+                    const accessToken = await signAccessToken(username);
+                    const refreshToken = await signRefreshToken(username);
+    
+                    return res.json({
+                        success:"true",
+                        message: "Successfully Logged in",
+                        accessToken: accessToken,
+                        refreshToken: refreshToken
+                    })
+                }else{
+                    throw "wrong Inputs"
+                }
             }
+           
             
         }else{
             throw "error"
@@ -109,15 +126,57 @@ const forgotPassword = async function (req, res){
 
 const logout = async function (req, res){
     try{
-         req.session.destroy();
-
+        if(req.session.isAuth){
+            req.session.destroy();
+           
+        }
+        console.log("hello")
+       
+        // let {
+        //     refreshToken
+        // } = req.body;
+        // if(!refreshToken){
+        //     throw "refresh token doesnot given"
+        // }
+        //const username = await verifyRefreshToken(refreshToken);
+       
             return res.json({
                 success:"true",
                 message: "logged out"
+     })
+            
+        
+    }catch(error){
+        logger.error(error, "error in logout")
+        return res.json({
+            success: "false",
+            message: error
+        })
+    }
+    
+}
+
+const refresh = async function (req, res){
+    try{
+        // let {
+        //     refreshToken
+        // } = req.body
+        // if(!refreshToken){
+        //     throw "error in rftok"
+        // }
+     //const username = await vrefreshToken(refreshToken);
+        const username = req.username
+
+     const accessToken = await signAccessToken(username);
+     
+     const refToken = await signRefreshToken(username);
+            return res.json({
+                accessToken: accessToken,
+                refreshToken: refToken
         })
         
     }catch(error){
-        logger.error(error, "error in login")
+        logger.error(error, "error in refresh")
         return res.json({
             success: "false",
             message: error
@@ -134,4 +193,4 @@ const isAuth = async (req, res, next) => {
     }
 }
 
-module.exports = {login, logout, isAuth, register, forgotPassword, updatePassword};
+module.exports = {login, logout, isAuth, register, forgotPassword, updatePassword, refresh};

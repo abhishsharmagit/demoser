@@ -1,20 +1,24 @@
 var router = require('express').Router();
-var areaController = require("../controller/area")
 var userController = require("../controller/user")
+var areaController = require("../controller/area")
+var {verifyAccessToken, verifyRefreshToken} = require("../utils/jwt")
+var {auth, decide} = require("../config/authConfig")
 
-router.post("/squareArea", userController.isAuth, areaController.squareArea);
-router.post("/rectArea", userController.isAuth, areaController.rectArea)
-router.post("/circleArea", userController.isAuth, areaController.circleArea)
-router.post("/triArea", userController.isAuth, areaController.triArea)
-router.get("/getArea", userController.isAuth, areaController.getArea)
-router.get("/getsqArea", userController.isAuth, areaController.getsqArea)
-router.get("/getreArea", userController.isAuth, areaController.getrectArea)
-router.get("/getcirArea", userController.isAuth, areaController.getcirArea)
-router.get("/gettriArea", userController.isAuth, areaController.gettriArea)
-router.post("/login", userController.login)
-router.get("/logout", userController.isAuth, userController.logout)
+
+router.post("/squareArea", auth(true), areaController.squareArea);
+router.post("/rectArea", auth(true), areaController.rectArea)
+router.post("/circleArea", auth(true), areaController.circleArea)
+router.post("/triArea", auth(true), areaController.triArea)
+router.get("/getArea", auth(true), areaController.getArea)
+router.get("/getsqArea", auth(true), areaController.getsqArea)
+router.get("/getreArea", auth(true), areaController.getrectArea)
+router.get("/getcirArea", auth(true), areaController.getcirArea)
+router.get("/gettriArea",  areaController.gettriArea)
+router.post("/login", decide, userController.login)
+router.post("/logout", verifyRefreshToken, userController.logout)
 router.post("/register",  userController.register)
-router.post("/forgot",  userController.forgotPassword)
-router.post("/update", userController.isAuth, userController.updatePassword)
+router.post("/refresh", verifyRefreshToken, userController.refresh)
+router.post("/forgot", auth(true), userController.forgotPassword)
+router.post("/update", auth(true), userController.updatePassword)
 
 module.exports = router;

@@ -1,4 +1,4 @@
-
+require("dotenv").config();
 var express = require("express");
 var app = express();
 
@@ -13,13 +13,14 @@ var mysql = require("mysql")
 var db = require("./db/conn")
 var session = require("express-session")
 var bcrypt = require('bcryptjs');
+var redisClient = require('./db/redis')
 
 // redis for storing the session
-var redis = require("redis")
+
 var redisconnect = require("connect-redis")(session);
 //redis setup end//
 
-//var mysqlsession = require("connect-mysql")(session);
+var mysqlsession = require("connect-mysql")(session);
 var cookieParser = require("cookie-parser")
 app.use(cookieParser());
 //logger start//
@@ -28,10 +29,7 @@ global.debugging = console.log;
 var reqLogger = require("./requestLogger/index")
 // logger end//
 
-let redisClient = redis.createClient({
-    port: 6379,
-    host: "localhost"
-})
+
 // parsing json start//
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());

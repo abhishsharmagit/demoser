@@ -81,7 +81,7 @@ const areas = {
                       });
                     });
                 },
-
+                
                 getArea: function(skip, limit) {
                   return new Promise((resolve, reject) => {
                     let paginationCondition = ``;

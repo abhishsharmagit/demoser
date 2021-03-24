@@ -11,6 +11,7 @@
 
 
 ## redis commands for check the session id
-- keys *
+- using redis-commander package for checking redis database
+- using set, get, del commands for storing or deleting key value pairs
 
 
